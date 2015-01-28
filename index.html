@@ -105,6 +105,8 @@
 				cache: false,
 				success: function(data){
 
+				$(".order").show();
+
 				var token = data;
 
 					braintree.setup(token, 'dropin', {
