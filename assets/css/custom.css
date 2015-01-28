@@ -42,7 +42,7 @@ a:hover {
 	padding-left: 32px;
 	font-size: 2em;
 }
-.navbar-right{
+.main, .sub{
 	color: #fff;
 }
 
@@ -348,8 +348,7 @@ a:hover {
 	}
 
 	.breadcrumbBox{
-		height:80px;
-		padding-top:21px;
+
 	}
 
 	.col-md-5.col-sm-12 p{
