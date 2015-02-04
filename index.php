@@ -1,3 +1,17 @@
+<?php
+
+require 'Braintree.php';
+
+Braintree_Configuration::environment('sandbox');
+Braintree_Configuration::merchantId('23nd25g4kn7gnqbb');
+Braintree_Configuration::publicKey('8552x2ym5bvhsycp');
+Braintree_Configuration::privateKey('17f3279171d4fd90ee9cd5256be17abf');
+
+$token = Braintree_ClientToken::generate(array(
+));
+
+?>
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -103,60 +117,48 @@
 
 	    <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
 	    <script>
-			$.ajax({
-				url: "proc.php",
-				type: "POST",
-				cache: false,
-				success: function(data){
+			braintree.setup("<?php echo $token;?>", 'dropin', {
+	        	container: 'checkout',
+				paymentMethodNonceReceived: function (event, nonce) {
 
-				$(".order").show();
+	    		var items = [];
 
-				var token = data;
+	    		$(".item").each(function() {
+				    items.push({
+				        qty: $(this).find(".quantity").text(),
+				        itemName: $(this).find(".itemName").text(),
+				        price: $(this).find(".price").text().replace(/\$/g,''),
+				    });
+				});
 
-					braintree.setup(token, 'dropin', {
-			        	container: 'checkout',
-						paymentMethodNonceReceived: function (event, nonce) {
+				var totalPrice = $(".totals .price").text().replace(/\$/g,'');
 
-			    		var items = [];
+				items.push({
+					total: totalPrice
+				});
 
-			    		$(".item").each(function() {
-						    items.push({
-						        qty: $(this).find(".quantity").text(),
-						        itemName: $(this).find(".itemName").text(),
-						        price: $(this).find(".price").text().replace(/\$/g,''),
-						    });
-						});
+				var jString = JSON.stringify(items);
 
-						var totalPrice = $(".totals .price").text().replace(/\$/g,'');
+				console.log("cart="+jString+"&amt="+totalPrice+"&nonce="+nonce);
 
-						items.push({
-							total: totalPrice
-						});
-
-						var jString = JSON.stringify(items);
-
-						console.log("cart="+jString+"&amt="+totalPrice+"&nonce="+nonce);
-
-						$.ajax({
-						  url: "proc.php",
-						  type: "POST",
-						  data: "cart="+jString+"&amt="+totalPrice+"&nonce="+nonce,
-						  cache: false,
-						  success: function(data){
-						    if(data=="failed"){
-						    	alert("Payment Failed");
-						    }
-						    else{
-						    	$(".finalcart ul li span").html("<p>Your order has been placed</p><p>Transaction id is "+data+"</p>");
-						    	$(".finalcart").show();
-						    	$("#cart").remove();
-						    }
-						  }
-						});
-					}
-		        });
-			  }
-			});
+				$.ajax({
+				  url: "proc.php",
+				  type: "POST",
+				  data: "cart="+jString+"&amt="+totalPrice+"&nonce="+nonce,
+				  cache: false,
+				  success: function(data){
+				    if(data=="failed"){
+				    	alert("Payment Failed");
+				    }
+				    else{
+				    	$(".finalcart ul li span").html("<p>Your order has been placed</p><p>Transaction id is "+data+"</p>");
+				    	$(".finalcart").show();
+				    	$("#cart").remove();
+				    }
+				  }
+				});
+			}
+        });
 	    </script>
 	</body>
 </html>

@@ -23,7 +23,7 @@ lookup = braintree.Transaction.search(
 for i in lookup._ResourceCollection__ids:
 
     transaction = braintree.Transaction.find(i)
-    print transaction.id
+
     if transaction.custom_fields and os.path.exists("files/"+transaction.id) == False:
 
         file = open("files/"+transaction.id, "w")

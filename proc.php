@@ -19,10 +19,6 @@ if ($_POST['amt'] && $_POST['nonce'] && $_POST['cart']) {
 
 	if ($result->success == 1) {echo $result->transaction->id;} else {echo "failed";}
 
-} else {
-	$token = Braintree_ClientToken::generate(array(
-	));
-	echo $token;
 }
 
 ?>
